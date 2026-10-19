@@ -232,7 +232,7 @@ function StaffPanel({ session }) {
       setMessage('A staff account with that email already exists.');
       return;
     }
-    if (!API.STAFF_ACCOUNTS && !isValidPassword(newPassword)) {
+    if (!isValidPassword(newPassword)) {
       setMessage(PASSWORD_MESSAGE);
       return;
     }
@@ -250,7 +250,9 @@ function StaffPanel({ session }) {
     } catch (err) {
       setMessage(err && err.status === 409
         ? 'A staff account with that email already exists.'
-        : authErrorMessage(err, errorText(err, "Couldn't add that account. Try again.")));
+        : err && err.status === 400
+          ? 'Check the name, email and password, then try again. ' + PASSWORD_MESSAGE
+          : authErrorMessage(err, errorText(err, "Couldn't add that account. Try again.")));
     } finally {
       busyRef.current = false;
       setBusy(false);
@@ -302,9 +304,7 @@ function StaffPanel({ session }) {
       <form className="add-staff-form" onSubmit={handleAdd}>
         <input type="text" placeholder="STAFF NAME" required maxLength={NAME_MAX} aria-label="Staff name" value={newName} onChange={function (e) { setNewName(e.target.value); }} />
         <input type="email" placeholder="EMAIL" required maxLength={EMAIL_MAX} aria-label="Staff email" value={newEmail} onChange={function (e) { setNewEmail(e.target.value); }} />
-        {!API.STAFF_ACCOUNTS && (
-          <input type="password" placeholder="TEMP PASSWORD" required maxLength={32} aria-label="Temporary password" value={newPassword} onChange={function (e) { setNewPassword(e.target.value); }} />
-        )}
+        <input type="password" placeholder="TEMP PASSWORD" required maxLength={32} aria-label="Temporary password" value={newPassword} onChange={function (e) { setNewPassword(e.target.value); }} />
         <select aria-label="Role" value={newRole} onChange={function (e) { setNewRole(e.target.value); }}>
           <option value="staff">Staff</option>
           <option value="admin">Admin</option>

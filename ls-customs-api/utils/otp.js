@@ -1,8 +1,11 @@
+// One-time password (OTP) helpers: issueCode() creates and emails a 6-digit code,
+// consumeCode() checks it. Codes expire in 10 minutes, work once, and allow 5 wrong attempts.
 const crypto = require('crypto');
 const OtpCode = require('../models/OtpCode');
 const { sendMail } = require('./mailer');
 const { codeEmail } = require('./emailTemplates');
 
+// How long a code stays valid, and how many wrong guesses are allowed.
 const TTL_MS = 10 * 60 * 1000;
 const MAX_ATTEMPTS = 5;
 

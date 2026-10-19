@@ -1,9 +1,11 @@
+// Authentication middleware. auth() checks the JWT sent as "Authorization: Bearer <token>",
+// loads the user from MongoDB and attaches it to req.user. requireRole() limits a route to certain roles.
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { displayName } = require('../utils/validation');
 
-// Verifies the Bearer token AND loads the user from the database, so a deleted
-// staff account or a reset password stops working immediately.
+// Rejects the request (401) if the token is missing, invalid, expired, belongs to a deleted account,
+// or was issued before the last password reset.
 async function auth(req, res, next) {
   try {
     const h = req.headers.authorization || '';
@@ -23,7 +25,7 @@ async function auth(req, res, next) {
       return res.status(401).json({ error: 'Session ended. Please log in again.' });
     }
 
-    // Role always comes from the database, never from the client
+    
     req.user = { userId: user.id, role: user.role, email: user.email, name: displayName(user) };
     next();
   } catch (err) {
@@ -31,6 +33,7 @@ async function auth(req, res, next) {
   }
 }
 
+// Usage: router.get('/', auth, requireRole('admin'), handler). Responds 403 if the role is not allowed.
 const requireRole = (...roles) => (req, res, next) =>
   roles.includes(req.user.role) ? next() : res.status(403).json({ error: 'Forbidden' });
 

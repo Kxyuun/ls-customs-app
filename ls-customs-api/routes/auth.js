@@ -1,3 +1,5 @@
+// Authentication routes: login, signup with email OTP, change/reset password, profile update and
+// the 3-step change-email flow. Passwords are hashed with bcrypt; sessions are signed JWTs (7 days).
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -14,9 +16,11 @@ const {
   normalizeEmail, normalizeName, isValidEmail, isValidName, isValidPassword, displayName,
 } = require('../utils/validation');
 
+// Creates the signed login token (JWT) for a user.
 const signToken = (u) =>
   jwt.sign({ userId: u.id, role: u.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
+// Safe user fields returned to the frontend (never the password hash).
 const userShape = (u) => ({
   id: u.id, email: u.email, firstName: u.firstName, lastName: u.lastName, name: displayName(u),
 });

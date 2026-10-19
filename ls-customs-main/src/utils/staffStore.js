@@ -12,6 +12,7 @@ function publicShape(a) {
   return { id: a.id, name: a.name, email: a.email, role: a.role };
 }
 
+// GET staff/admin accounts.
 export async function listStaff(options) {
   if (API.STAFF_ACCOUNTS) {
     var data = await apiRequest(API.STAFF_ACCOUNTS, { token: options && options.token });
@@ -20,6 +21,7 @@ export async function listStaff(options) {
   return readStaffAccounts().map(publicShape);
 }
 
+// POST a new staff/admin account (admin only; the server checks the role).
 export async function addStaff(fields, options) {
   var name = normalizeName(fields.name);
   var email = normalizeEmail(fields.email);
@@ -48,6 +50,7 @@ export async function addStaff(fields, options) {
   return publicShape(account);
 }
 
+// DELETE a staff/admin account (admin only).
 export async function removeStaff(id, options) {
   var opts = options || {};
 

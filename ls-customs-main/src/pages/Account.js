@@ -1,3 +1,4 @@
+// My Account page: profile, change email, change password, my bookings and notifications.
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Header from '../components/Header.js';
 import Footer from '../components/Footer.js';
@@ -17,6 +18,7 @@ import { useLiveRefresh } from '../utils/useLiveRefresh.js';
 // made (and its notification) shows up without a manual reload.
 var REFRESH_MS = 15000;
 
+// Lists the customer's bookings and lets them cancel a pending one.
 function MyBookings({ customer }) {
   var [state, setState] = useState({ status: 'loading', bookings: [] });
   var [busyId, setBusyId] = useState(null);
@@ -101,6 +103,7 @@ function MyBookings({ customer }) {
   );
 }
 
+// In-app notifications created when a booking status changes (refreshed automatically).
 function Notifications({ customer }) {
   var [state, setState] = useState({ status: 'loading', items: [] });
   var [busy, setBusy] = useState(false);
@@ -179,6 +182,7 @@ function Notifications({ customer }) {
 // "Change Email" lives inside the Profile box. It is one button that opens a
 // short 3-step flow: (1) enter your password, (2) type the new email and send
 // a code to it, (3) enter the code. The email only changes after step 3.
+// Change-email flow: current password -> new email -> emailed code.
 function ChangeEmail({ customer }) {
   var [step, setStep] = useState('idle'); // 'idle' | 'password' | 'email' | 'code'
   var [newEmail, setNewEmail] = useState('');
@@ -329,6 +333,7 @@ function ChangeEmail({ customer }) {
   );
 }
 
+// Change-password form (validates the new password before sending).
 function ChangePassword() {
   var [current, setCurrent] = useState('');
   var [next, setNext] = useState('');
@@ -409,6 +414,7 @@ function ChangePassword() {
   );
 }
 
+// Edit first and last name.
 function AccountForm({ customer }) {
   var [firstName, setFirstName] = useState(customer.firstName);
   var [lastName, setLastName] = useState(customer.lastName);
@@ -496,6 +502,7 @@ function AccountForm({ customer }) {
   );
 }
 
+// Wraps the page so only a signed-in customer can open it.
 function AccountRoute() {
   var session = useCustomerSession();
   return session ? <AccountForm key={session.email} customer={session} /> : null;

@@ -1,3 +1,4 @@
+// API client used by every store. Sends JSON requests with the Bearer token when provided.
 // Thin fetch wrapper for future backend calls. Turns network failures and
 // non-OK responses into a thrown ApiError so callers can't accidentally treat
 // a 4xx/5xx as success.
@@ -9,6 +10,7 @@ export class ApiError extends Error {
   }
 }
 
+// apiRequest(url, {method, body, token}) -> parsed JSON (or null for 204). Throws ApiError on failure.
 export async function apiRequest(url, options) {
   var opts = options || {};
   var headers = {};

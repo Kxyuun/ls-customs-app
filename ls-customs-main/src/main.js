@@ -1,3 +1,4 @@
+// Frontend entry point: mounts the React app inside the router and loads the global stylesheet.
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';

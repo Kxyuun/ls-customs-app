@@ -1,3 +1,4 @@
+// Staff account management: staff/admins can list accounts; only admins can add or remove them.
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
@@ -8,14 +9,17 @@ const {
   normalizeEmail, normalizeName, isValidEmail, isValidName, isValidPassword,
 } = require('../utils/validation');
 
+// Fields returned to the dashboard (no password data).
 const shape = (u) => ({ id: u.id, name: u.name, email: u.email, role: u.role });
 
+// GET /api/staff
 // LIST (staff or admin)
 router.get('/', auth, requireRole('staff', 'admin'), asyncHandler(async (req, res) => {
   const list = await User.find({ role: { $in: ['staff', 'admin'] } }).sort({ createdAt: 1 });
   res.json(list.map(shape));
 }));
 
+// POST /api/staff  {name, email, password, role}
 // CREATE (admin only)
 router.post('/', auth, requireRole('admin'), asyncHandler(async (req, res) => {
   const name = normalizeName(req.body.name);
@@ -38,6 +42,7 @@ router.post('/', auth, requireRole('admin'), asyncHandler(async (req, res) => {
   }
 }));
 
+// DELETE /api/staff/:id  (cannot remove yourself or the last admin)
 // REMOVE (admin only)
 router.delete('/:id', auth, requireRole('admin'), asyncHandler(async (req, res) => {
   const { id } = req.params;

@@ -1,3 +1,4 @@
+// Staff / admin dashboard: all bookings with status controls, plus staff account management for admins.
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../components/ConfirmDialog.js';
@@ -15,6 +16,7 @@ import { useLiveRefresh } from '../utils/useLiveRefresh.js';
 // How often the staff table re-checks the database for new bookings.
 var REFRESH_MS = 8000;
 
+// Maps API error codes to friendly messages.
 function errorText(err, fallback) {
   if (err && err.status === 0) return 'Could not reach the server. Check your connection and try again.';
   if (err && err.status === 409) return 'That change is no longer allowed. The booking may have been updated already.';
@@ -22,6 +24,7 @@ function errorText(err, fallback) {
   return fallback;
 }
 
+// Table of all bookings; offers only the valid next status for each booking and refreshes automatically.
 function BookingsTable({ session }) {
   var [state, setState] = useState({ status: 'loading', bookings: [] });
   var [busyIds, setBusyIds] = useState({});
@@ -161,6 +164,7 @@ function BookingsTable({ session }) {
   );
 }
 
+// Admin-only panel to add and remove staff accounts.
 function StaffPanel({ session }) {
   var [state, setState] = useState({ status: 'loading', staff: [] });
   var [busy, setBusy] = useState(false);
@@ -315,6 +319,7 @@ function StaffPanel({ session }) {
   );
 }
 
+// Chooses what to show based on the role (staff: bookings; admin: bookings + staff panel).
 function DashboardContent() {
   var session = useStaffSession();
   var navigate = useNavigate();

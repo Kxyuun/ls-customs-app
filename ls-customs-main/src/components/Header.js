@@ -1,3 +1,4 @@
+// Site header with navigation and the sign-in / account / logout controls for the current role.
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import ConfirmDialog from './ConfirmDialog.js';

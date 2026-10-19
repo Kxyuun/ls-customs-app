@@ -1,3 +1,4 @@
+// Route guard: only a signed-in customer may see the wrapped page, otherwise redirect to /login.
 import { Navigate, useLocation } from 'react-router-dom';
 import { useCustomerSession } from '../utils/auth.js';
 import { loginUrlFor } from '../utils/redirect.js';

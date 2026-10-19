@@ -24,6 +24,7 @@ function buildSlots(hours) {
   return slots;
 }
 
+// Gets the open/full/closed slots for a date from the API.
 export async function getDayAvailability(dateStr, todayStr) {
   if (API.AVAILABILITY) {
     var data = await apiRequest(API.AVAILABILITY + '?date=' + encodeURIComponent(dateStr));

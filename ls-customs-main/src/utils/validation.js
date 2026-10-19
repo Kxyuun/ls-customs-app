@@ -1,3 +1,4 @@
+// Frontend input validation. Same rules as the API (ls-customs-api/utils/validation.js).
 export var NAME_MAX = 25;
 export var EMAIL_MAX = 254;
 export var PASSWORD_MESSAGE = 'Password must be 8-32 characters with at least one letter and one number.';

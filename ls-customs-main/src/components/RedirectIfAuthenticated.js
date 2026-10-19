@@ -1,3 +1,4 @@
+// Route guard for /login and /signup: signed-in users are sent to their own page instead.
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { useCustomerSession, useStaffSession } from '../utils/auth.js';
 import { safeRedirect } from '../utils/redirect.js';

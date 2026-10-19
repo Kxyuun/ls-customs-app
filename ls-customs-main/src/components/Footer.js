@@ -1,3 +1,4 @@
+// Site footer with contact details, taken from data/businessInfo.js.
 import { businessInfo, currentYear } from '../data/businessInfo.js';
 
 function Footer() {

@@ -1,3 +1,4 @@
+// Root component: holds the route table (see the list of routes below).
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home.js';
 import Login from './pages/Login.js';

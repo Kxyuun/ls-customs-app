@@ -1,3 +1,4 @@
+// Route guard: only a signed-in staff or admin may see the wrapped page, otherwise redirect to /login.
 import { Navigate } from 'react-router-dom';
 import { API } from '../config/api.js';
 import { hasLocalStaffAccounts, useStaffSession } from '../utils/auth.js';

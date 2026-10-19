@@ -1,5 +1,7 @@
+// Email sending through Nodemailer (Gmail SMTP). Used for OTP codes and booking status emails.
 const nodemailer = require('nodemailer');
 
+// Create the SMTP connection only when SMTP_HOST, SMTP_USER and SMTP_PASS are set in .env.
 let transporter = null;
 if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
   const port = parseInt(process.env.SMTP_PORT, 10) || 465;
@@ -11,6 +13,7 @@ if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
   });
 }
 
+// True when real email sending is configured.
 const mailEnabled = () => !!transporter;
 
 // Emails always go out through SMTP (Gmail). If SMTP isn't configured this

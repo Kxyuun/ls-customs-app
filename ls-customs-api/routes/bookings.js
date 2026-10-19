@@ -1,3 +1,5 @@
+// Booking routes: list bookings, create a booking (customers) and update a booking status.
+// The server validates everything itself: price, date window, time slot, and status workflow.
 const router = require('express').Router();
 const mongoose = require('mongoose');
 const Booking = require('../models/Booking');
@@ -13,6 +15,7 @@ const {
   isValidDateString, todayString, addDays, parseSlot, BOOKING_WINDOW_DAYS,
 } = require('../utils/schedule');
 
+// Allowed status changes (booking workflow). A status can only move forward along these paths.
 const TRANSITIONS = {
   pending: ['progress', 'cancelled'],
   progress: ['ready', 'cancelled'],
@@ -22,7 +25,8 @@ const TRANSITIONS = {
 };
 
 
-// Current time in the shop's timezone, as minutes since midnight
+
+// Current time in the shop timezone (Asia/Manila) as minutes since midnight.
 function shopNowMinutes() {
   const parts = new Intl.DateTimeFormat('en-GB', {
     timeZone: 'Asia/Manila', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
@@ -31,20 +35,26 @@ function shopNowMinutes() {
   return get('hour') * 60 + get('minute');
 }
 
+// Accepted values for the vehicle and payment fields.
 const VEHICLES = ['Sedan', 'SUV', 'Motorcycle'];
 const PAYMENTS = ['GCash', 'Maya', 'Cash'];
 
-// ---------- LIST ----------
+
+// ---------- LIST BOOKINGS ----------
+// GET /api/bookings  (Bearer)  Customers see only their own bookings; staff and admins see all.
 router.get('/', auth, asyncHandler(async (req, res) => {
   const filter = req.user.role === 'customer' ? { customerEmail: req.user.email } : {};
   res.json(await Booking.find(filter).sort({ createdAt: -1 }));
 }));
 
-// ---------- CREATE ----------
+
+// ---------- CREATE BOOKING ----------
+// POST /api/bookings  (customer)  {vehicle, serviceTypes, additionalServices, date, timeSlot, payment}
+// Validates input, computes the total with utils/pricing.js, checks slot availability, then saves.
 router.post('/', auth, requireRole('customer'), asyncHandler(async (req, res) => {
   const b = req.body || {};
   const { vehicle, date, timeSlot, payment } = b;
-  // One or more service types. (A single `baseService` string is still accepted.)
+  
   const types = Array.isArray(b.serviceTypes) && b.serviceTypes.length
     ? b.serviceTypes
     : (typeof b.baseService === 'string' && b.baseService ? [b.baseService] : []);
@@ -52,8 +62,7 @@ router.post('/', auth, requireRole('customer'), asyncHandler(async (req, res) =>
   if (!VEHICLES.includes(vehicle)) return res.status(400).json({ error: 'Invalid vehicle' });
   if (!PAYMENTS.includes(payment)) return res.status(400).json({ error: 'Invalid payment method' });
   if (!types.length) return res.status(400).json({ error: 'Pick a service' });
-  // The server prices the booking itself (car wash depends on vehicle type);
-  // any total sent by the browser is ignored.
+ 
   const priced = priceBooking(vehicle, types, b.additionalServices);
   if (priced.error) return res.status(400).json({ error: priced.error });
   if (!isValidDateString(date)) return res.status(400).json({ error: 'Invalid date' });
@@ -63,7 +72,8 @@ router.post('/', auth, requireRole('customer'), asyncHandler(async (req, res) =>
     return res.status(400).json({ error: 'Date is outside the booking window' });
   }
 
-  // The slot must exist for that day and still have room (checked on the server)
+  
+  // Check the time slot is offered, has not passed yet, and is still free.
   const hour = parseSlot(timeSlot);
   const avail = await getAvailability(date);
   const slot = avail.slots.find((s) => s.hour === hour);
@@ -74,6 +84,7 @@ router.post('/', auth, requireRole('customer'), asyncHandler(async (req, res) =>
   }
   if (!slot.available) return res.status(409).json({ error: 'That time slot is no longer available' });
 
+  // Generate a unique reference code (retries if the random code already exists).
   for (let i = 0; i < 5; i++) {
     try {
       const booking = await Booking.create({
@@ -97,6 +108,7 @@ router.post('/', auth, requireRole('customer'), asyncHandler(async (req, res) =>
 }));
 
 // ---------- UPDATE STATUS ----------
+// PATCH /api/bookings/:id  (Bearer) {status}  Staff/admin follow the workflow; customers may only cancel their own pending booking.
 router.patch('/:id', auth, asyncHandler(async (req, res) => {
   const { status } = req.body || {};
   if (!mongoose.isValidObjectId(req.params.id)) return res.status(404).json({ error: 'Not found' });

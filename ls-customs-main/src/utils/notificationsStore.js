@@ -52,6 +52,7 @@ export function recordStatusNotification(booking) {
 }
 
 // Customer-scoped. Fails closed: a missing/empty customerEmail returns nothing.
+// GET the customer's notifications.
 export async function listNotifications(options) {
   var opts = options || {};
   if (API.NOTIFICATIONS) {
@@ -65,6 +66,7 @@ export async function listNotifications(options) {
     .sort(function (a, b) { return (b.createdAt || '').localeCompare(a.createdAt || ''); });
 }
 
+// PATCH one notification as read.
 export async function markNotificationRead(id, options) {
   var opts = options || {};
   if (API.NOTIFICATIONS) {

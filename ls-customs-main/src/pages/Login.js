@@ -1,3 +1,4 @@
+// Login page shared by customers, staff and admins. The API returns the role and the app redirects accordingly.
 import { useRef, useState } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import AuthVisual from '../components/AuthVisual.js';

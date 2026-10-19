@@ -1,3 +1,4 @@
+// Safe redirect helpers: only internal paths are allowed, which prevents open-redirect links.
 import { serviceDetails } from '../data/serviceData.js';
 
 // Only these internal routes may be used as a post-login redirect. Anything

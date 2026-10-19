@@ -1,3 +1,4 @@
+// Hook that re-runs a function on a timer (used for live dashboard and notification refresh).
 import { useEffect } from 'react';
 
 // Calls `fn` every `ms` milliseconds while the tab is visible, and right away

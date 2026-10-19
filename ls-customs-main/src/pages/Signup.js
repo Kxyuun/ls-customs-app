@@ -1,3 +1,4 @@
+// Customer signup: details form -> emailed OTP code -> account created, then the customer logs in.
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import AuthVisual from '../components/AuthVisual.js';

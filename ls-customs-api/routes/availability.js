@@ -1,3 +1,4 @@
+// Availability route: tells the booking calendar which time slots are open, full or closed for a date.
 const router = require('express').Router();
 const asyncHandler = require('../utils/asyncHandler');
 const { getAvailability } = require('../utils/availability');

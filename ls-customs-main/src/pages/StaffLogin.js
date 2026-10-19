@@ -1,3 +1,4 @@
+// Local demo setup screen only. With the API configured this route forwards to /login.
 import { useRef, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import AuthFooter from '../components/AuthFooter.js';

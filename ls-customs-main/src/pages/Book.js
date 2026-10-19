@@ -1,3 +1,5 @@
+// Booking page: 4-step wizard (vehicle -> services -> date & time -> confirm & payment).
+// Prices come from data/serviceData.js for display; the API recalculates the real total when saving.
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import jsPDF from 'jspdf';
@@ -26,10 +28,12 @@ import { usePageTitle } from '../utils/usePageTitle.js';
 var basePriceOptions = serviceOptions.filter(function (o) { return o.detail !== 'consultation'; });
 var consultationOption = serviceOptions.filter(function (o) { return o.detail === 'consultation'; })[0];
 
+// Finds a service option by its key.
 function findOption(detailKey) {
   return serviceOptions.filter(function (o) { return o.detail === detailKey; })[0] || null;
 }
 
+// Prevents jumping to a step before the earlier steps are completed.
 function clampStep(step, s) {
   var n = Number(step) || 1;
   if (!s.vehicle) return '1';
@@ -123,6 +127,7 @@ function normalizeConfirmed(response, payload) {
   });
 }
 
+// Selectable service card (opens the details modal via the info button).
 function ServiceCard({ option, type, name, selected, priceText, onSelect, onInfo }) {
   return (
     <div
@@ -158,6 +163,7 @@ function ServiceCard({ option, type, name, selected, priceText, onSelect, onInfo
   );
 }
 
+// The booking wizard itself (state, validation, availability lookup, submit and PDF summary).
 function BookingFlow({ customer }) {
   var email = customer.email;
   var now = useShopNow();
@@ -733,6 +739,7 @@ function BookingFlow({ customer }) {
   );
 }
 
+// Wraps the wizard so only a signed-in customer can use it.
 function BookingRoute() {
   var session = useCustomerSession();
   // key: a different account (e.g. after switching in another tab) gets a

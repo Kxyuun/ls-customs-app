@@ -1,3 +1,4 @@
+// Reusable confirmation pop-up (used for cancel, remove and similar actions).
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 

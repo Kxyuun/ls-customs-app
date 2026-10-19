@@ -36,6 +36,7 @@ function requireWrite(ok) {
   if (!ok) throw new ApiError(STORAGE_UNAVAILABLE, 0);
 }
 
+// Local demo mode only: salted SHA-256 hash. In API mode the server (bcrypt) handles passwords.
 async function hashPassword(password, salt) {
   if (!window.crypto || !window.crypto.subtle) {
     throw new Error('SECURE_CONTEXT_REQUIRED');
@@ -47,6 +48,7 @@ async function hashPassword(password, salt) {
   }).join('');
 }
 
+// Turns an auth error into a user-friendly message.
 export function authErrorMessage(err, fallback) {
   if (err && err.message === 'SECURE_CONTEXT_REQUIRED') {
     return 'This browser context cannot secure the demo login. Open the site on localhost or HTTPS.';
@@ -195,6 +197,7 @@ export async function login(email, password) {
   throw new ApiError('Invalid credentials', 401);
 }
 
+// Ends the customer session and clears that customer's saved booking draft.
 export function logoutCustomer() {
   var s = getCustomerSession();
   if (s) clearDraft(s.email);

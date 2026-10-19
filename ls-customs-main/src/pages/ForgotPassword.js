@@ -1,3 +1,4 @@
+// Password recovery: enter email -> emailed OTP code -> choose a new password.
 import { useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import AuthVisual from '../components/AuthVisual.js';

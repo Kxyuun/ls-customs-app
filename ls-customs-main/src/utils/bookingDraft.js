@@ -1,3 +1,4 @@
+// Saves an unfinished booking per customer so the wizard can restore it after a page reload.
 import { readJSON, writeJSON, removeKey } from './storage.js';
 
 // In-progress booking wizard state, kept in sessionStorage PER customer

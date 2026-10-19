@@ -1,3 +1,4 @@
+// Date helpers (YYYY-MM-DD strings, shop-local "now", adding days, validity checks).
 import { businessInfo } from '../data/businessInfo.js';
 
 // All booking dates are plain 'YYYY-MM-DD' strings in the SHOP's time zone

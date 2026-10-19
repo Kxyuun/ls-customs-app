@@ -1,22 +1,20 @@
-// Server-side price table. The server computes every booking total itself and
-// never trusts a total sent by the browser.
-// KEEP IN SYNC with src/data/serviceData.js in the frontend (same names/prices).
-// Names are the booking labels ("Auto Care", ...). A number = flat price;
-// an object = price per vehicle type.
+// Server-side price list and booking price calculation. The browser never decides the total;
+// keep these tables in sync with the frontend src/data/serviceData.js.
+
+// Base price per service type. Car Wash is priced by vehicle type.
 const SERVICE_PRICES = {
   'Auto Care': 3500,
   'Core Fix': 4000,
   'Vehicle Mod': 23000,
   'Body Work': 25000,
-  // PLACEHOLDER prices - the owner must confirm these.
+  
   'Car Wash': { Sedan: 350, SUV: 500, Motorcycle: 200 },
   'Not Sure? Get a Consultation': 0,
 };
 const CONSULTATION = 'Not Sure? Get a Consultation';
 
+
 // Optional additional services, grouped by the service type they belong to.
-// A customer may only add an extra whose service type is also in the booking.
-// PLACEHOLDER prices - the owner must confirm these (flat price, any vehicle).
 const ADDONS = {
   'Auto Care': { 'Engine Flush': 1200, 'Wheel Alignment': 1500, 'Aircon Cleaning': 1800, 'Headlight Restoration': 1500 },
   'Core Fix': { 'Computer Diagnostic Scan': 1000, 'Brake Fluid Flush': 1200, 'Battery Replacement': 500, 'Test Drive Report': 300 },
@@ -25,15 +23,15 @@ const ADDONS = {
   'Car Wash': { 'Underwash': 300, 'Engine Bay Wash': 500, 'Wax Polish': 800, 'Interior Deep Clean': 1200 },
 };
 
+// Price of one service for a vehicle, or null if the service is unknown.
 function priceOf(service, vehicle) {
   const p = SERVICE_PRICES[service];
   if (p === undefined) return null;
   return typeof p === 'number' ? p : (p[vehicle] !== undefined ? p[vehicle] : null);
 }
 
-// serviceTypes: array of service type names (one or more).
-// addons: array of additional-service names, each belonging to a chosen type.
-// Returns { serviceTypes, addons, services, total } or { error }.
+
+// Validates the chosen services/extras and returns {serviceTypes, addons, services, total}, or {error}.
 function priceBooking(vehicle, serviceTypes, addons) {
   const types = Array.isArray(serviceTypes) ? serviceTypes.map(String) : [];
   const extras = Array.isArray(addons) ? addons.map(String) : [];
@@ -52,7 +50,7 @@ function priceBooking(vehicle, serviceTypes, addons) {
     total += p;
   }
   for (const a of extras) {
-    // The extra must belong to one of the service types in this booking.
+    
     const owner = types.find((t) => ADDONS[t] && ADDONS[t][a] !== undefined);
     if (!owner) return { error: 'Additional service does not match the chosen services' };
     total += ADDONS[owner][a];

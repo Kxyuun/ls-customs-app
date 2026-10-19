@@ -1,3 +1,4 @@
+// Handles scroll position on route changes (top of page, or the #section from the link).
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { useLocation, useNavigationType } from 'react-router-dom';
 

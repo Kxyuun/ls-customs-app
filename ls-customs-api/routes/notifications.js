@@ -6,10 +6,12 @@ const Notification = require('../models/Notification');
 const asyncHandler = require('../utils/asyncHandler');
 const { auth, requireRole } = require('../middleware/auth');
 
+// GET /api/notifications  (customer)  The logged-in customer's notifications, newest first.
 router.get('/', auth, requireRole('customer'), asyncHandler(async (req, res) => {
   res.json(await Notification.find({ customerEmail: req.user.email }).sort({ createdAt: -1 }));
 }));
 
+// PATCH /api/notifications/:id  (customer)  Marks one notification as read.
 router.patch('/:id', auth, requireRole('customer'), asyncHandler(async (req, res) => {
   if (!mongoose.isValidObjectId(req.params.id)) return res.status(404).json({ error: 'Not found' });
   // Filtering by the customer's email is the ownership check

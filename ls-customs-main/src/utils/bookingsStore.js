@@ -34,6 +34,7 @@ function newReference(existing) {
   return code;
 }
 
+// GET bookings. Customers get their own; staff/admin get all (the server enforces this).
 export async function listBookings(options) {
   var opts = options || {};
   // Fail closed: a customer-scoped call whose email is empty must not fall
@@ -52,6 +53,7 @@ export async function listBookings(options) {
   return all.slice().sort(function (a, b) { return (b.createdAt || '').localeCompare(a.createdAt || ''); });
 }
 
+// POST a new booking (the server calculates the total and sets the status).
 export async function createBooking(payload, customer) {
   if (API.BOOKINGS) {
     var data = await apiRequest(API.BOOKINGS, { method: 'POST', body: payload, token: customer.token });
@@ -75,6 +77,7 @@ export async function createBooking(payload, customer) {
 
 // Applies a status change after checking the transition rules. Reads the
 // CURRENT stored status (not a stale UI copy) before deciding.
+// PATCH a booking status (the server validates the workflow).
 export async function updateBookingStatus(id, nextStatus, options) {
   var opts = options || {};
 

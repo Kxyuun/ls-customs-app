@@ -1,3 +1,4 @@
+// Pop-up showing a service's details; data comes from data/serviceData.js.
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { serviceDetails } from '../data/serviceData.js';

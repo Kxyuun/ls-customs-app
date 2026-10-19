@@ -1,3 +1,4 @@
+// Hook that returns the current shop-local date/time and keeps it updated.
 import { useEffect, useState } from 'react';
 import { getShopNow } from './dates.js';
 

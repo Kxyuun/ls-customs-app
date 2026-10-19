@@ -1,3 +1,4 @@
+// Home page: hero, services list, schedule, about and contact sections (all content from /data).
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header.js';
@@ -108,6 +109,7 @@ var heroStats = [
   { num: String(payOptions.length), label: 'Payment Options' }
 ];
 
+// Home page component.
 function Home() {
   var [activeDetail, setActiveDetail] = useState(null);
   usePageTitle('LS Customs \u2014 Pasay City Auto Shop');

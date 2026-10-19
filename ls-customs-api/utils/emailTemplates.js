@@ -38,6 +38,7 @@ const STATUS_COPY = {
   },
 };
 
+// Builds the shared HTML email layout (title, intro text, and a table of booking details).
 function layout(title, intro, rows, footer) {
   const rowsHtml = rows.map(([k, v]) =>
     '<tr><td style="padding:6px 12px 6px 0;color:#666;white-space:nowrap;vertical-align:top">' + esc(k) +
@@ -52,6 +53,7 @@ function layout(title, intro, rows, footer) {
 
 const shopFooterHtml = () => esc(SHOP.name + ' · ' + SHOP.address + ' · ' + SHOP.phone);
 
+// Booking details shown as label/value rows in status emails.
 function bookingRows(b) {
   const services = (b.services && b.services.length ? b.services : [b.baseService].concat(b.additionalServices || []))
     .filter(Boolean).join(', ');
@@ -75,6 +77,7 @@ function notificationMessage(b) {
     b.date + ' ' + b.timeSlot + '.';
 }
 
+// Email sent to the customer when a booking status changes.
 function statusEmail(b) {
   const c = STATUS_COPY[b.status];
   if (!c) return null;
@@ -95,6 +98,7 @@ const CODE_COPY = {
   'email-change': { subject: 'Confirm your new LS Customs email', title: 'Confirm your new email', intro: 'Use this code to confirm this address as the email for your LS Customs account.' },
 };
 
+// Email containing a one-time verification code (signup, reset or email change).
 function codeEmail(purpose, code, minutes) {
   const c = CODE_COPY[purpose];
   const text = c.title + '\n\n' + c.intro + '\n\nYour code: ' + code + '\nIt expires in ' + minutes +
@@ -109,6 +113,7 @@ function codeEmail(purpose, code, minutes) {
   return { subject: c.subject, text, html };
 }
 
+// Security notice sent to the OLD address after an email change.
 function emailChangedNoticeEmail(oldEmail, newEmail) {
   const text = 'The email on your LS Customs account was changed from ' + oldEmail + ' to ' + newEmail +
     '.\n\nIf this was not you, contact the shop right away: ' + SHOP.phone;
